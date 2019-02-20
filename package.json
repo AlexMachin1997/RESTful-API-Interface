@@ -1,0 +1,31 @@
+{
+  "name": "restful-api",
+  "version": "1.0.0",
+  "description": "Provides CRUD operations for the React-Native client. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "REST",
+    "Authentication",
+    "Authorization",
+    "NodeJS",
+    "CRUD",
+    "Login",
+    "Logout",
+    "Register",
+    "PUT",
+    "DELETE"
+  ],
+  "author": "Alex Machin",
+  "license": "MIT",
+  "dependencies": {
+    "config": "^3.0.1",
+    "express": "^4.16.4",
+    "helmet": "^3.15.1",
+    "joi": "^14.3.1",
+    "mongoose": "^5.4.14",
+    "morgan": "^1.9.1"
+  }
+}
