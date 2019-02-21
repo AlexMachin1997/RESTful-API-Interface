@@ -6,7 +6,7 @@ const express = require('express');
 const app = express();
 const helmet = require('helmet');
 
-//Requiring the user routes
+//Requiring the user controller
 const userController = require('./controllers/users');
 const testController = require('./controllers/test');
 
