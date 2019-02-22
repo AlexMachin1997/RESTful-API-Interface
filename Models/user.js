@@ -92,8 +92,21 @@ function loginValidation(req) {
      password: Joi.required(),
    }
    return Joi.validate(req, schema);
- }
+}
 
+function editValidation(user) {
+   const schema = {
+      name: Joi.string().required().max(255),
+      email: Joi.string().required().max(255).email(),
+      phone: Joi.number(),
+      allergies: Joi.array().items(Joi.string())
+   }
+   return Joi.validate(user, schema);
+}
+
+
+ 
 exports.User = User; 
 exports.registrationValidation = registrationValidation;
 exports.loginValidation = loginValidation 
+exports .editValidation = editValidation;

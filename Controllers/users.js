@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const {User, registrationValidation, loginValidation} = require('../Models/user.js');
+const {User, registrationValidation, loginValidation, editValidation} = require('../Models/user.js');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -26,11 +26,7 @@ router.post("/register", async (req,res) => {
     - If error is true send 404 status and send the first message in the details array to the client
     */
     if(error) return res.status(400).json(error.details[0].message) 
-    // if(error) {
-    //     return res.status(400).send(error.details[0].message)
-    // }
-
-
+  
     /* 
     Checking for a duplicate user:
     - Checking the user doesnt already exists
@@ -94,10 +90,7 @@ router.post("/login", async (req,res) => {
   - If error is true send 404 status and send the first message in the details array to the client
   */
   if(error) return res.status(400).json(error.details[0].message) 
-  // if(error) {
-  //     return res.status(400).send(error.details[0].message)
-  // }
-
+ 
   /* 
   Invalid email or password:
   - Checking the user doesnt already exists
@@ -105,7 +98,7 @@ router.post("/login", async (req,res) => {
   - If user is true (Meaning they do exist), then send them the message below along with state 404
   */
   let user = await User.findOne({email: req.body.email});    
-  if(!user) return res.status(400).json({successMessage: 'Access denied : Invalid email or password'})    
+  if(!user) return res.status(400).json({successMessage: 'Access denied : Invalid email or password'});    
 
   /* 
   Returning the response to the client:
@@ -130,12 +123,54 @@ router.post("/login", async (req,res) => {
 
 
 // @route   GET /api/users/me
-// @desc    Returns current user
+// @desc    Returns the current users detailed, an auth token is needed for this route
 // @access  private
-router.get('/me', passport.authenticate('jwt', {session: false}), 
-(req,res) => {
-  const {user} = req;
-  res.json(_.pick(user, ['_id', 'name', 'email','phone', 'allergies']));
+router.get('/me', passport.authenticate('jwt', {session: false}), async (req,res) => {
+  res.json(_.pick(req.user, ['_id', 'name', 'email','phone', 'allergies']));
+});
+
+
+// @route   PUT /api/users
+// @desc    Updates the current users details, an auth token is needed for this route
+// @access  private
+router.put('/', passport.authenticate('jwt', {session:false}), async (req,res) => {
+  
+    /* 
+    Validating body request: 
+    - Object destructring the error object from the Joi validation libaray
+    - Validate entire body provided by express 
+    */
+   const { error } = editValidation(req.body);
+
+
+   /* 
+   Checking for a valid body:
+   - If error is true send 404 status and send the first message in the details array to the client
+   */
+   if(error) return res.status(400).json(error.details[0].message) 
+
+
+   /* 
+   Checking for a duplicate user:
+   - Checking the current user doesn't set an email equal to an existing user
+   - Wait for promise to resolve before releasing the thread (Moving on)
+   - If user is true (Meaning they do exist), then send them the message below along with state 404
+   */
+   let user = await User.findOne({email: req.body.email});    
+   if(user) return res.status(404).json({errorMessage:'A user with the given email already exists!'});       
+ 
+});
+
+
+// @route   DELETE /api/users
+// @desc    
+// @access  private
+router.delete('/', passport.authenticate('jwt', {session:false}), async (req,res) => {
+  const data = await User.findOneAndDelete(req.user._id);
+
+  if(!data) return res.status(404).json({errorMessage: "Oh no, I couldn't find the user "})
+  
+  res.json({successMessage: "Your account has been deleted"});
 });
 
 
