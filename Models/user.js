@@ -1,53 +1,75 @@
+//Requiring dependencies for the schema
+const jwt = require('jsonwebtoken');
+const config = require('../Config/keys');
 const Joi = require("joi"); //Returns a class which contains premade methods
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const User = mongoose.model("User", new mongoose.Schema ({
+//Creating the user schema using mongoose
+const userSchema = new Schema({
 
- //Name field
- name : {
-    type: String,
-    required: true,
-    maxlength: 255
- },
+   //Name field
+   name : {
+      type: String,
+      required: true,
+      maxlength: 255
+   },
+  
+   //Email field
+   email : {  
+      type: String,
+      required: true,
+      unique: true,
+      maxlength: 255
+   },
+   
+   //Password field 
+   password : {
+      type: String,
+      required: true,
+      minLength: 5,
+      maxlength: 1024,
+   },
+  
+   //Phone field
+   phone: {
+      type: Number,
+   },
+  
+   //Allergies field
+   allergies: [String],
+  
+   //Reset password toekn Field
+   resetPasswordExpires: {
+      type: Date
+   },
+  
+   //Rest password token field 
+   resetPasswordToken: {
+      type: String
+   },
+});
 
- //Email field
- email : {  
-    type: String,
-    required: true,
-    unique: true,
-    maxlength: 255
- },
- 
- //Password field 
- password : {
-    type: String,
-    required: true,
-    minLength: 5,
-    maxlength: 1024,
- },
+/* 
+Generate authentication token:
+- Generate a JWT with a payload, private key defined in the enviroment variables, and an expiration time (1 week)
+- Return the token when the function is used
+*/
+userSchema.methods.generateAuthToken = function(){
+   const token = jwt.sign({_id: this._id, name: this.name}, config.secret, {expiresIn:86400});
+   return token;
+}
 
- //Phone field
- phone: {
-    type: Number,
- },
+//Creating a user instace with the userSchema
+const User = mongoose.model('user', userSchema);
 
- //Allergies field
- allergies: [String],
-
- //Reset password toekn Field
- resetPasswordExpires: {
-    type: Date
- },
-
- //Rest password token field 
- resetPasswordToken: {
-    type: String
- },
-}));
-
-// Validates the User scheam before going into the database
-// When some data is wrong an error object is returned
-function validateUser(user){
+/* 
+Registration validation
+- Validate the user schema before reaching the database
+- When there is any errors it will return them through an error object 
+- Joi notes: https://medium.com/@Yuschick/building-custom-localised-error-messages-with-joi-4a348d8cc2ba
+*/
+function registrationValidation(user){
     const schema = {
       name: Joi.string().required().max(255),
       email: Joi.string().required().max(255).email(),
@@ -58,15 +80,20 @@ function validateUser(user){
     return Joi.validate(user, schema);
 }
 
-function validateLogin(req) {
+/* 
+loginValidation:
+- Requires the request from the body
+- It checks for an email and password, they are needed to login
+- This is performed on the server, but will also need to be done on the client 
+*/
+function loginValidation(req) {
    const schema = {
-     email: Joi.string().required().max(255).email(),
-     password: Joi.string().required().min(5).max(255),
+     email: Joi.required(),
+     password: Joi.required(),
    }
- 
    return Joi.validate(req, schema);
  }
 
 exports.User = User; 
-exports.validateUser = validateUser;
-exports.validateLogin = validateLogin 
+exports.registrationValidation = registrationValidation;
+exports.loginValidation = loginValidation 
