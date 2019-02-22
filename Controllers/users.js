@@ -147,7 +147,7 @@ router.put('/', passport.authenticate('jwt', {session:false}), async (req,res) =
    Checking for a valid body:
    - If error is true send 404 status and send the first message in the details array to the client
    */
-   if(error) return res.status(400).json(error.details[0].message) 
+   if(error) return res.status(400).json({error: error.details[0].message}) 
 
 
    /* 
@@ -156,10 +156,25 @@ router.put('/', passport.authenticate('jwt', {session:false}), async (req,res) =
    - Wait for promise to resolve before releasing the thread (Moving on)
    - If user is true (Meaning they do exist), then send them the message below along with state 404
    */
-   let user = await User.findOne({email: req.body.email});    
-   if(user) return res.status(404).json({errorMessage:'A user with the given email already exists!'});       
- 
-});
+   //let user = await User.findOne({email: req.body.email});    
+   //if(user) return res.status(404).json({errorMessage:'A user with the given email already exists!'});       
+
+
+   const userFields = {};
+   userFields.user = req.user.id;
+
+   if(req.body.name) userFields.name = req.body.name;
+   if(req.body.email) userFields.email = req.body.email;
+   if(req.body.phone) userFields.phone = req.body.phone;
+   if(req.body.allergies) userFields.allergies = req.body.allergies;
+
+   console.log(userFields);
+
+   const newData = await User.findOneAndUpdate({user: req.user.id},{$set: userFields},{new: true});
+   //if(!newData) return res.status(500).json({errorMessage: 'Internal server error, try again'})
+  
+   res.json(newData);
+  });
 
 
 // @route   DELETE /api/users
