@@ -52,11 +52,11 @@ const userSchema = new Schema({
 
 /* 
 Generate authentication token:
-- Generate a JWT with a payload, private key defined in the enviroment variables, and an expiration time (1 week)
+- Generates a JWT with a payload, private key defined in the enviroment variables, and an expiration time (1 week)
 - Return the token when the function is used
 */
 userSchema.methods.generateAuthToken = function(){
-   const token = jwt.sign({_id: this._id, name: this.name}, config.secret, {expiresIn:86400});
+   const token = jwt.sign({_id: this._id}, config.secret, {expiresIn:86400});
    return token;
 }
 
@@ -84,7 +84,7 @@ function registrationValidation(user){
 loginValidation:
 - Requires the request from the body
 - It checks for an email and password, they are needed to login
-- This is performed on the server, but will also need to be done on the client 
+- Joi notes: https://medium.com/@Yuschick/building-custom-localised-error-messages-with-joi-4a348d8cc2ba
 */
 function loginValidation(req) {
    const schema = {
@@ -94,6 +94,12 @@ function loginValidation(req) {
    return Joi.validate(req, schema);
 }
 
+/* 
+editValidation:
+- Requires the request from the body
+- It checks for name, email, phone and allergies
+- Joi notes: https://medium.com/@Yuschick/building-custom-localised-error-messages-with-joi-4a348d8cc2ba
+*/
 function editValidation(user) {
    const schema = {
       name: Joi.string().required().max(255),
@@ -104,8 +110,6 @@ function editValidation(user) {
    return Joi.validate(user, schema);
 }
 
-
- 
 exports.User = User; 
 exports.registrationValidation = registrationValidation;
 exports.loginValidation = loginValidation 

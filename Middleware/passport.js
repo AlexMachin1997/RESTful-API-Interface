@@ -1,8 +1,5 @@
 //Requiring the dependencies
 const {Strategy, ExtractJwt } = require('passport-jwt');
-const mongoose = require('mongoose');
-
-
 const config = require('../Config/keys');
 const {User} = require('../Models/user');
 
@@ -17,13 +14,13 @@ module.exports = function (passport) {
             
             if(user) {
                 done(null, user);
-                console.log(jwt_payload);    
+                // console.log(jwt_payload);    
             } else {
                 done(null, false);
             }
         } 
         catch(err) {
-            console.error(`Passport error ${err}`);
+            console.error(`Passport middleware error:  ${err}`);
         }
     }));
 };

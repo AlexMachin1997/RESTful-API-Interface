@@ -9,21 +9,27 @@ This project is a simple RESTful API, it can be integrated with any of the follo
 # Purpose of the API
 The overall purpose of this project is to provide any application with the functionlaity to integrate with a NoSQL database like [MongoDB](https://www.mongodb.com/). Though the application can integrate with most forms of application for my personal usage it will be integrated with a cross-platform tool know as [React-Native](https://facebook.github.io/react-native/).
 
-# The technologies used for this RESTful API:
+# Technologies used for the API's functionality:
 * [NodeJS](https://nodejs.org/en/) - Allows JavaScript to be executed on the server-side of an application, one language to rule them all.
 * [NPM](https://www.npmjs.com/)  - NodeJS package manager, dependencies can be downloaded from the popular registry
 * [MongoDB](https://www.mongodb.com/) - The database which is being used
+* [Mongoose](https://mongoosejs.com/) - Used to connect and perform queires to MongoDB
 * [Mlab](https://mlab.com/) - The cloud solution for MongoDB
 * [JSON Web Token (JWT)](https://jwt.io/) - Generates a secure authentication and authroization token.
 * [Joi](https://github.com/hapijs/joi) - Used to validate objects
 * [lodash](https://lodash.com/) - Small JavaScript utilty library
+* [PassportJS](http://www.passportjs.org/) - Handles the JWT header extraction for authorisation
+* [Cors](https://medium.com/@alexishevia/using-cors-in-express-cac7e29b005b) - Required for the API to deliver resources from a seperate domain
+* [Morgan](https://www.npmjs.com/package/morgan) - logs requests to the development server, won't be avaliable in production
+* [Helmet](https://www.npmjs.com/package/helmet) - Secures expresses HTTP headers
+
 
 # Getting started with the API
 * Clone the project to your development enviroment by using "git remote add origin `https://github.com/AlexMachin1997/RESTful-API-Interface.git`
 
-* Install all dependencies for the application by issuing thhis command `npm install`, this will fetch all of the dependencies if you are connected to the internet and have permission **(Excludes nodemon, this wil be installed seperately later)**
+* Install all dependencies for the application by issuing this command `npm install`, this will fetch all of the dependencies **(Excludes nodemon, this wil be installed seperately later)**
 
-* Create a [mlab account](https://mlab.com/signup/) and create and perform the following (If I have given you THE enviroment variables for an exisitng database skip this part):
+* Create an [mlab account](https://mlab.com/signup/) and create and perform the following (If I have given you the enviroment variables for an exisitng database skip this part):
     * Create a database
     * Create a user for the database
     * **Remember the username and password for later, its required to connect to the datbase**
@@ -34,9 +40,9 @@ The overall purpose of this project is to provide any application with the funct
     * **Remember**  set the text to JSON for syntax highlighting
 
 * Enviroment variables setup:
-    * Create a variable name mongoURL, and the database URL should be copied from MLab
-    * Add the user name and password for the datatbase user ()
-    * Once the enviroment variable is present all the enviroment variables have been created
+    * Locate the config directory, create a file named keys_dev.js and copy the context from keys_prod.js and make the following changes:
+        * `mongoURL` should be a string which is the mlab database with the database username and password **The passwords you created earlier**
+        * `secret` can be a any string, it will be used to identify the JWT during development and production 
 
 * Starting the server:
     * Issue the command `npm install nodemon`, this will allow the server to run and when changes are made they are injected and the server is quickly restarted.
@@ -52,10 +58,10 @@ Since JWT tokens are used for authentication and authorization, a logout route i
 | Name | Description | HTTP Verb | API Route | Token required
 | --- | --- | --- | --- | --
 | Register | Registers the user | GET | `/api/users` | No
-| Login | Logs the user in and generates token | POST | `/api/users`| No
+| Login | Authenticates and generates a JWT | POST | `/api/users`| No
 | Current | Gets the authenticated users details | GET | `/api/users/me` | Yes
-| Update user | Updates the current user details | PUT | `/api/users/:id` | Yes
-| Delete user | Updates the current user details | DELETE | `/api/users/:id` | Yes
+| Update user | Updates the current users details | PUT | `/api/users/` | Yes
+| Delete user | Deletes the current users details | DELETE | `/api/users/` | Yes
 
 
 # Deployment
@@ -81,16 +87,7 @@ If you want to connect with me on my proffesional social network platforms feel 
 * [Twitter](https://twitter.com/AlexMachin97)
 
 ### API Version
-The application is currently at version 1.0, with each feature added it will increment based on these [guidelines](https://docs.npmjs.com/about-semantic-versioning)
+The application is currently at version 1.4, with each feature added it will increment based on these [guidelines](https://docs.npmjs.com/about-semantic-versioning)
 
 ### Project Licence information
 This project is licensed under the MIT License, for more information refer to the LICENCE.md file located within the project.
-
-
-
-
-
-
-
-
-
