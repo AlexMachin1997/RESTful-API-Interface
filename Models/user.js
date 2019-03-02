@@ -112,5 +112,5 @@ function editValidation(user) {
 
 exports.User = User; 
 exports.registrationValidation = registrationValidation;
-exports.loginValidation = loginValidation 
+exports.loginValidation = loginValidation; 
 exports .editValidation = editValidation;

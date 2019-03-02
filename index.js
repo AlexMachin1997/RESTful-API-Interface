@@ -1,24 +1,28 @@
- //Requiring the dependencies used within this module
 const express = require('express');
 const app = express();
 
+
 // Development dependencies initalize
-require('./servcies/development-dependencies')();
+require('./Services/development-dependencies.js')(app);
 
 // Logging middleware initalize
-require('./servcies/logging')();
+require('./Services/logging.js')();
 
 // Authentication middleware initialize
-require('./servcies/authentication')(app);
+require('./Services/authentication.js')(app);
 
 // Express route initialize
-require('./servcies/routes')(app);
+require('./Services/routes.js')(app);
 
 // Database initialize
-require('./servcies/database')();
+require('./Services/database.js')();
 
 // Express initialize
 const port = process.env.PORT || 3000; 
-app.listen(port, () => {
-    console.log(`Express is listening on port ${port}`);
-})
+const server = app.listen(port, () => {
+    console.log('You are connected on port' + port);
+});
+
+//Exports the express server for supertest to access
+module.exports = server;
+

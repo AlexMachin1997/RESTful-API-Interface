@@ -50,18 +50,14 @@ router.post("/register", async (req,res) => {
   - If the promise is rsolved then sent the data to the client and set isSuccess to true
   */
   const data = await user.save();
-  if(!data) return res.status(505).json({isSuccess: false, message: "Internal server error"}) 
+  if(!data) return res.status(505).json({isError: true, message: "Internal server error"}) 
 
   if(process.env.NODE_ENV === 'development') {
     console.log(`Newly created users data ${data}`);
   }
 
-  res.json({
-    data: _.pick(user, ['_id', 'name', 'email','phone', 'allergies']),
-    isSuccess: true
-  });
+  res.json({data: _.pick(user, ['_id', 'name', 'email','phone', 'allergies']),isSuccess: true});
 });
-
 
 // @route   POST /api/users/login
 // @desc    Logs user in if details match
@@ -79,33 +75,16 @@ router.post("/login", async (req,res) => {
   /* 
   Invalid email or password:
   - Checking the user doesnt already exists
-  - If the promise is rejected 
+  - If the promise is rejected then show an error message
+  - If the promise is accepted then log the user in and generate auth token
   */
   let user = await User.findOne({email: req.body.email});    
-  if(!user) return res.status(400).json({
-    error: true,
-    message: 'Access denied : Invalid email or password'
-  });    
-
-  /* 
-  - Password comparison:
-  - Compare the password input to the hased password in the database
-  - If the passwrod doesnt match set the response to 404, set the isError is true and return the message
-  */
+  if(!user) return res.status(400).json({isSuccess: false,message: 'Access denied : Invalid email or password'});    
 
   const validPassword = await bcrypt.compare(req.body.password, user.password)
-  if(!validPassword) {
-    res.status(400);
-    res.json({
-      isSuccess: false,
-      message: 'Access denied: Invalid email or password'
-    }) 
-  }
+  if(!validPassword) return res.status(400).json({isSuccess: false, message: 'Access denied: Invalid email or password'});
 
-  res.json({
-    isSuccess: true,
-    token: `Bearer ${user.generateAuthToken()}`
-  });
+  res.json({isSuccess: true, token: `Bearer ${user.generateAuthToken()}`});
 });
 
 
@@ -168,7 +147,7 @@ router.put('/', passport.authenticate('jwt', {session:false}), async (req,res) =
   
   res.json({
     isSuccess: true,
-    data: _.pick(newData, ['_id', 'name', 'email','phone', 'allergies']),
+    data: _.pick(newData, ['name', 'email','phone', 'allergies']),
     message: "Your account has successfully been updated"
   });
 });
