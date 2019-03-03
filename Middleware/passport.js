@@ -7,6 +7,7 @@ const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.secret;
 
+// PassportJS JWT Docs - http://www.passportjs.org/packages/passport-jwt/ 
 module.exports = function (passport) {
     passport.use(new Strategy(opts, async (jwt_payload, done) => {
         try {        

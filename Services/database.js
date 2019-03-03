@@ -20,7 +20,7 @@ module.exports = function () {
                 // Nothing needed during testing.
             } else {
                 // When not in production log the connection message
-                console.log(`You are connected`);
+                console.log(`You are connected to ${config.mongoURL}`);
             }
         })
 

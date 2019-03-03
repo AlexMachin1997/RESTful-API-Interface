@@ -13,19 +13,18 @@ router.post("/register", async (req,res) => {
   /* 
   Checking for a valid body:
   - validation encapsulated in the user model
-  - checks the body of data
-  - Any errors set isError to true and return the message
+  - If the promise is rejected set the status to 400, isSuccess is set to false and return the message
   */
   const { error } = registrationValidation(req.body);
-  if(error) return res.status(400).json({isError: true , message: error.details[0].message}) 
+  if(error) return res.status(400).json({isSuccess: false , message: error.details[0].message}) 
   
   /* 
   Checking for a duplicate user:
   - Checking the user doesnt already exists via email, emails need to be unique for each user
-  - Any errors set isError to true and return the message
+  - Any errors set isError to true, set HTTP status to 404 and return a message
   */
   let user = await User.findOne({email: req.body.email});    
-  if(user) return res.status(404).json({isError: true, message:'A user with the given email already exists!'});    
+  if(user) return res.status(404).json({isSuccess: false, message:'A user with the given email already exists!'});    
    
   /* 
   Creating the user object:
@@ -44,19 +43,25 @@ router.post("/register", async (req,res) => {
 
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
+  
   /* 
   Saving the user object:
-  - If the promise is rejected send an internal server error code and message
-  - If the promise is rsolved then sent the data to the client and set isSuccess to true
+  - If the promise is rejected set the HTTP status to 505, isSuccess is set to false and a message is returned 
+  - If the promise is resolved then the data is returned, isSuccess is set to true and a message is returned
   */
   const data = await user.save();
-  if(!data) return res.status(505).json({isError: true, message: "Internal server error"}) 
+  if(!data) return res.status(505).json({isSuccess: false, message: "Internal server error"}) 
 
+  // Log when in development, not needed in production
   if(process.env.NODE_ENV === 'development') {
     console.log(`Newly created users data ${data}`);
   }
 
-  res.json({data: _.pick(user, ['_id', 'name', 'email','phone', 'allergies']),isSuccess: true});
+  res.json({
+    data: _.pick(user, ['_id', 'name', 'email','phone', 'allergies']),
+    isSuccess: true, 
+    message: "User successfully registered"
+  });
 });
 
 // @route   POST /api/users/login
@@ -66,8 +71,9 @@ router.post("/login", async (req,res) => {
    
   /* 
   Checking for a valid body:
-  - Desturcture the error object provided by Joi lib
-  - Any errors set status to 404, then send message to client
+  - validation encapsulated in the user model
+   - If the promise is rejected set the status to 400, isSuccess is set to false and return the message
+  - If the promise is resolved sent a success message and set isSuccess to false
   */
   const { error } = loginValidation(req.body);
   if(error) return res.status(400).json({isSuccess: false, message: error.details[0].message}) 
@@ -75,8 +81,8 @@ router.post("/login", async (req,res) => {
   /* 
   Invalid email or password:
   - Checking the user doesnt already exists
-  - If the promise is rejected then show an error message
-  - If the promise is accepted then log the user in and generate auth token
+  - If the promise is rejected then show an error message, HTTP status code is set to 400 and isSuccess is set to false
+  - If the promise is resolved then isSuccess is set to true, auth token and a message is returned
   */
   let user = await User.findOne({email: req.body.email});    
   if(!user) return res.status(400).json({isSuccess: false,message: 'Access denied : Invalid email or password'});    
@@ -84,7 +90,11 @@ router.post("/login", async (req,res) => {
   const validPassword = await bcrypt.compare(req.body.password, user.password)
   if(!validPassword) return res.status(400).json({isSuccess: false, message: 'Access denied: Invalid email or password'});
 
-  res.json({isSuccess: true, token: `Bearer ${user.generateAuthToken()}`});
+  res.json({
+    isSuccess: true, 
+    token: `Bearer ${user.generateAuthToken()}`, 
+    message: "You have successfully logged in"
+  });
 });
 
 
@@ -92,9 +102,11 @@ router.post("/login", async (req,res) => {
 // @desc    Returns the current users detailed, an auth token is needed for this route
 // @access  private
 router.get('/me', passport.authenticate('jwt', {session: false}), async (req,res) => {
- 
+
+  // Payload of data to be returned  
   const data = _.pick(req.user, ['_id', 'name', 'email','phone', 'allergies'])
 
+  // Log when in development mode, not needed in production
   if(process.env.NODE_ENV === 'development') {
     console.log(`Current data: ${data}`);
   }
@@ -112,10 +124,12 @@ router.get('/me', passport.authenticate('jwt', {session: false}), async (req,res
 // @access  private
 router.put('/', passport.authenticate('jwt', {session:false}), async (req,res) => {
 
-   /* 
-   Checking for a valid body:
-   - If error is true send 404 status and send the first message in the details array to the client
-   */
+  /* 
+  Checking for a valid body:
+  - validation encapsulated in the user model
+   - If the promise is rejected set the status to 400, isSuccess to false and return the message
+  - If the promise is resolved then the body is valid
+  */
   const { error } = editValidation(req.body);
   if(error) return res.status(400).json({isSuccess: false, error: error.details[0].message}) 
 
@@ -132,6 +146,7 @@ router.put('/', passport.authenticate('jwt', {session:false}), async (req,res) =
   if(req.body.phone) userFields.phone = req.body.phone;
   if(req.body.allergies) userFields.allergies = req.body.allergies;
 
+  // Log when in development mode, not needed in production
   if(process.env.NODE_ENV === 'development') {
     console.log(`Updated data:  ${userFields}`);
   }
@@ -139,8 +154,8 @@ router.put('/', passport.authenticate('jwt', {session:false}), async (req,res) =
   /* 
   Updating the database:
   - Wait for the findByIDAndUpdate to finish then release the thread and continue
-  - If the promise is rejected an internal server error will be thrown
-  - If the update is accepted the newly updated data and a success message is sent, also isSuccess is set to true
+  - If the promise is rejected the HTTP status code will be set, isSuccess is set to false and a message is returned
+  - If the update is resolved the newly updated data, a success message is sent, isSuccess is set to true
   */
   const newData = await User.findByIdAndUpdate(req.user.id,{$set: userFields},{new: true});
   if(!newData) return res.status(500).json({isSuccess: false, message: 'Internal server error, try again'})
@@ -161,8 +176,8 @@ router.delete('/', passport.authenticate('jwt', {session:false}), async (req,res
   /* 
   Deleting the user form the  database:
   - Wait for the findOneAndDelete function to finish 
-  - If the promsis is rejected set the status to 404, isError to true and return the message
-  - If the promose is resolved sent a success message and set isSuccess to true
+  - If the promise is rejected set the status to 404, isSuccess is set to true and return the message
+  - If the promise is resolved sent a success message and set isSuccess to false
   */
   const data = await User.findOneAndDelete(req.user._id);
   if(!data) return res.status(404).json({isSuccess: false,message: "Oh no, I couldn't find the user "})
