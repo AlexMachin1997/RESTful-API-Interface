@@ -46,7 +46,7 @@ As of the current version of the API, it is currently capable of performing the 
 ## Getting started 
 * Clone the project to your development environment by using ` git clone https://github.com/AlexMachin1997/RESTful-API-Interface.git`
 
-* Install all dependencies for the application by issuing this command `npm install`; this will fetch all of the dependencies **(Excludes nodemon and Jest as they are development dependencies)**
+* Install all dependencies for the application by issuing this command `npm install` **(Excludes nodemon and Jest as they are development dependencies)**
 
 * Create a [mlab account](https://mlab.com/signup/) and perform the following **(If I have given you the enviroment variables for an existing database skip this part)**:
     * Create a database
@@ -54,9 +54,8 @@ As of the current version of the API, it is currently capable of performing the 
     * NOTE: **Remember the username and password for later, they are required for the enviroment variables**
 
 * Install and configure an API development area like [Postman](https://www.getpostman.com/):
+    * Setup your API client ready for running the enviroment
     * When the server is active you can use the express routes to perform CRUD operations.
-    * When sending new or updating an object, you will need to submit a payload of data, to see the 
-    * **NOTE**: Set the text to JSON for syntax highlighting
 
 * Development enviroment variables setup:
     * Create keys_dev.js within the keys directory
@@ -69,7 +68,7 @@ As of the current version of the API, it is currently capable of performing the 
     * Dependency installation:
         * `npm i nodemon`, this will download a simply utility libarary to handle changes while the server is running
     * Initializing the development enviroment
-        * Issue `npm start` to fire up the express server, the express server and mongo dtabase wil both be avaliable
+        * Issue `npm start` to fire up the express server, the express server and mongo database wil both be avaliable
 
  * Issues during setup: 
     * If there are issues repeat the setup, but if it still won't work post a question [here](https://github.com/AlexMachin1997/RESTful-API-Interface/issues)
