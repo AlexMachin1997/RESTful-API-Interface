@@ -51,7 +51,7 @@ As of the current version of the API, it is currently capable of performing the 
 * Create a [mlab account](https://mlab.com/signup/) and perform the following **(If I have given you the enviroment variables for an existing database skip this part)**:
     * Create a database
     * Create a user for the database on mlab
-    * NOTE: **Remember the username and password for later, they are required for the enviroment variables**
+    * **NOTE:** Remember the username and password for later, they are required for the enviroment variables
 
 * Install and configure an API development area like [Postman](https://www.getpostman.com/):
     * Setup your API client ready for running the enviroment
@@ -68,7 +68,7 @@ As of the current version of the API, it is currently capable of performing the 
     * Dependency installation:
         * `npm i nodemon`, this will download a simply utility libarary to handle changes while the server is running
     * Initializing the development enviroment
-        * Issue `npm start` to fire up the express server, the express server and mongo database wil both be avaliable
+        * Issue `npm start` to fire up the express server and mongo database. They will both now be avaliable until you stop nodemon from running.
 
  * Issues during setup: 
     * If there are issues repeat the setup, but if it still won't work post a question [here](https://github.com/AlexMachin1997/RESTful-API-Interface/issues)
@@ -91,9 +91,8 @@ As of the current version of the API, it is currently capable of performing the 
 
 * Performing test
     * `npm test`, runs all the files specified with [filename].test.js 
-    * Upon performing the tests, you will receive an output like the example below (Not all tests can fit in the example screenshot)
-    ![Jest test example output](https://lh3.googleusercontent.com/3h2sGR7-0h1BeIL0I8tFoYtdVlc6FP4yt8oAQwKs4hOOiD62KlAIeMyJv-vZlm2c6o8u23McLcT98omfMF8p9CAmnXOU5vqhq_tRb5alfqCAPZ3TkjMgc9IsyoBNYyUdPKGoe3B81Xy5GyVeK7tLlwm3xEFuxkw25cEgGUe7fRDORWSua3EL0p4hLHkFeNL5Zj879xceNCeDIsUEiRK0gaC0DovjpEhmrtjo5at7ymeSZENBTt6rfP5LNhLPfJbMYmRFf0ChOXwn8mOzwtLcWCJlgzMCBRgekwEfZ72n7W4pOXZXECif_tcfePp2a1Lz_qR1JBrllGCdVyBzbJuTPZDnseDYK0wAUL9Vn5p01C1g45NqfnP4Lg7y2l0NbvgB5treV3RENAlDnU0KOMBBPYzCR3b-gGnvZOYPXZx82x6sb4MY1FuPB7PxFk5qG2Bb4hJwwlVCgqcY7KnZgprkRXTjPdiHjoJ5EKclRsOgLRCuzoTQ2d6-qHPWKsRMPTzX80GLMf4RHle_VqsRk5CIeMyIrLOIy0CsExmRgGk2FQdKjZIbtewI_zIonqZa_-YRgx0L9SXABM90CtxoOCU7gZR4Yfgi17NPJ09GT5Y9jQqlWlbBXjDk65Ist--r1ya3nVP2cH4uQhXOQ02hI9tmS7JIPnnOIqI=w1298-h738-no)
-
+    * This will start performing all the tests specified within the test directory
+    
     
 ## Endpoints
 The table below specifies all the API endpoints available in the current build of the project, additional routes may be added in the future, but for now, this is the current set of routes.
