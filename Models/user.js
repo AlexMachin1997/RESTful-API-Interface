@@ -39,7 +39,7 @@ const userSchema = new Schema({
    //Allergies field
    allergies: [String],
   
-   //Reset password toekn Field
+   //Reset password token Field
    resetPasswordExpires: {
       type: Date
    },
@@ -86,12 +86,12 @@ loginValidation:
 - It checks for an email and password, they are needed to login
 - Joi notes: https://medium.com/@Yuschick/building-custom-localised-error-messages-with-joi-4a348d8cc2ba
 */
-function loginValidation(req) {
+function loginValidation(user) {
    const schema = {
      email: Joi.required(),
      password: Joi.required(),
    }
-   return Joi.validate(req, schema);
+   return Joi.validate(user, schema);
 }
 
 /* 

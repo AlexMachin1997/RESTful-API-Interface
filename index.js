@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 
-
 // Development dependencies initalize
 require('./Services/development-dependencies.js')(app);
 
@@ -20,7 +19,7 @@ require('./Services/database.js')();
 // Express initialize
 const port = process.env.PORT || 3000; 
 const server = app.listen(port, () => {
-    console.log('You are connected on port' + port);
+    console.log(`You are connected to express on port ${port}`);
 });
 
 //Exports the express server for supertest to access
