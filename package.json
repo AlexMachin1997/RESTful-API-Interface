@@ -23,7 +23,7 @@
   "author": "Alex Machin",
   "license": "MIT",
   "dependencies": {
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "helmet": "^3.15.1",
